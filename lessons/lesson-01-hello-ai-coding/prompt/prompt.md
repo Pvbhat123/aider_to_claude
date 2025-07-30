@@ -43,22 +43,6 @@ mkdir lesson1
 cd lesson1
 ```
 
-### 3. Install Claude Code (AI Coding Assistant)
-Follow the installation instructions from Claude Code documentation:
-- Download Claude Code from the official website
-- Install the CLI tool
-- Verify installation with: `claude --version`
-
-### 4. Configure API Keys
-Set up your Anthropic API key (do not share this with anyone):
-```bash
-# For Unix/Mac
-export ANTHROPIC_API_KEY="your-api-key-here"
-
-# For Windows
-set ANTHROPIC_API_KEY=your-api-key-here
-```
-
 ## Project Structure
 Create the following structure in your current directory:
 ```
@@ -69,7 +53,6 @@ src/
     ├── main.py
     └── transcript.txt
 ```
-
 ## Basic AI Coding with Claude Code
 
 ### Starting Claude Code
@@ -77,12 +60,6 @@ Simply type your instructions directly in the Claude Code interface. Claude will
 - Automatically understand context from your current directory
 - Create, read, update files as needed
 - Execute commands when appropriate
-
-### Essential Claude Code Features
-- **Multi-file awareness**: Claude can see and work with multiple files simultaneously
-- **Automatic execution**: Claude can run commands and show outputs
-- **Context persistence**: Claude maintains conversation context throughout the session
-- **Natural language**: Just describe what you want in plain English
 
 ## Exercise 1: Basic AI Coding Tasks
 
@@ -139,73 +116,6 @@ To improve the word frequency counter:
 
 **Instruction**: "Modify the code to only show words that appear more than 3 times, and display the count number alongside each word before the hashtags"
 
-This demonstrates Claude's ability to:
-- Make multiple related changes
-- Implement conditional logic
-- Format output appropriately
-
-## Key Concepts
-
-### Claude Code Architecture
-1. **Context**: Claude automatically understands your project structure and files
-2. **Intelligence**: Claude uses advanced AI to understand your intent
-3. **Execution**: Claude can create, modify files and run commands directly
-
-### Best Practices with Claude Code
-- Be clear and specific in your instructions
-- Describe the desired outcome, not just the steps
-- Review generated code before confirming changes
-- Use natural language - Claude understands context
-- Break complex tasks into smaller, clear instructions
-
-### Claude Code Advantages
-- No need to manually add files to context
-- Automatic understanding of project structure
-- Can handle complex, multi-file operations
-- Natural conversation flow
-- Integrated file operations and command execution
-
-### Important Notes
-- Claude Code enhances your development workflow
-- Always review code before accepting changes
-- Be specific about requirements and constraints
-- Claude maintains context throughout the conversation
-
-## Advanced Claude Code Features
-
-### Multi-file Operations
-**Example**: "Create a utils.py file with helper functions and import them in main.py"
-
-### Refactoring
-**Example**: "Refactor the word frequency counter to use object-oriented programming"
-
-### Error Handling
-**Example**: "Add proper error handling for file not found scenarios"
-
-### Testing
-**Example**: "Create unit tests for the word frequency counter functions"
-
-## Tips for Effective Claude Code Usage
-
-1. **Be Descriptive**: Instead of "fix the bug", say "the word count is including punctuation, modify to count only alphabetic words"
-
-2. **Provide Context**: "Following Python best practices, refactor the code to be more modular"
-
-3. **Iterative Development**: Start simple, then add complexity incrementally
-
-4. **Leverage Claude's Understanding**: Claude can infer common patterns and best practices
-
-## Next Steps
-- Experiment with more complex multi-file projects
-- Try refactoring existing codebases
-- Explore Claude's ability to explain code
-- Practice with different programming languages
-
-## Remember
-- The KISS principle applies to your instructions too
-- Claude Code is a conversation - be natural
-- Focus on what you want to achieve, not how
-- Claude can handle complex tasks while keeping things simple for you
 
 follow the above transcript and to those changes in the src.
 do the tasks in the order if any error occured solve it ,take your time and give me the result what i expect from the transcript.

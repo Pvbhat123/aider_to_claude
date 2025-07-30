@@ -26,45 +26,7 @@ the above is the folder structure of the paicc2.
 
 # Lesson 2: Multi-File Editing with AI - Transcript
 
-## Introduction
-
-Welcome to Principled AI Coding, Lesson Two.
-
-You've learned the fundamentals. Now let's progress to the next level of AI coding with multi-file editing. AI coding across multiple files is a no-brainer must-have necessity for efficient engineering in the age of generative AI.
-
-In this lesson, we're going to build on the fundamentals so you can quickly create and modify files across your codebase quickly and concisely.
-
-## The Big Three Bulls-Eye Principle
-
-Before we dive in, let's establish the key principle behind this lesson: **The Big Three Bulls-Eye**.
-
-At the heart of every AI coding assistant, there are three vital components that make the magic happen:
-
-1. **Context**
-2. **Model**
-3. **Prompt**
-
-We refer to these as "The Big Three." Master these three elements and you'll unlock the full power of AI coding for today's tools and tomorrow's tools.
-
-Great AI coding comes when you take the Big Three (context, model, and prompt) and consistently intersect them like throwing darts - you want to hit the center where you give:
-- Just enough context
-- Select the right model for the job
-- Design the right AI coding prompt
-
-When you align these three elements, you'll know it because moments after you send your prompt, your code will update in just the way you wanted. The magic happens at the intersection - the sweet spot where context, model, and prompt work together seamlessly. This is the bulls-eye, and with every prompt you write, you want to be striking the bulls-eye.
-
-### Why This Matters
-
-A big challenge with AI coding is that it's easy to get started but hard to get more done over time. That's because each of these three elements have to be selected properly to maximize efficiency:
-
-- If your model is not powerful enough, it doesn't matter what context or prompt you have - you'll run into issues
-- If your prompt is unclear or incomplete, even the best model with perfect context will fail
-- If your context is wrong or insufficient, the AI won't have the information it needs
-
-Throughout upcoming lessons, we'll discuss how to select the right model and build great AI coding prompts. But in this lesson, we're focusing on **context management**.
-
 ## Setting Up the Project
-
 Let's continue from our previous application. From lesson one, we'll open up the terminal.
 
 ```bash
@@ -105,10 +67,6 @@ uv run main
 ```
 
 The `uv run main` command is equivalent to running `python main.py` but uses the UV package manager.
-
-## Planning Our Enhancements
-
-Everything we do as engineers is about moving toward an end state. It's all about the value you're adding to the applications you're building. It's never been more important to be 100% clear about what you want to build, because now you can delegate that work to your AI coding assistant.
 
 ### Our Enhancement Checklist
 
@@ -211,10 +169,6 @@ Strip punctuation from words:
 Update word.lower() to strip punctuation: comma, period, question mark, exclamation
 ```
 
-### Important Practice Note
-
-Resist the urge to make code edits by hand. Every change is an opportunity to practice AI coding. This mental shift is crucial - think of yourself as a code reviewer and curator, not the programmer writing the code.
-
 ## Task 5: Gemini Integration
 
 ### Creating Type Definitions
@@ -258,20 +212,6 @@ Update TranscriptAnalysis: add keywords: list[str]
 Update analyze_transcript: pass in and use word_count
 Update main.py: print keywords
 ```
-
-This demonstrates multi-file coordinated changes across:
-- Type definitions
-- Function signatures
-- Implementation logic using Gemini API
-- Output formatting
-
-The Gemini API will provide:
-- Quick summaries using Gemini's language understanding
-- Bullet point extraction with Gemini's analysis
-- Sentiment analysis powered by Gemini
-- Keyword extraction based on the word frequency data
-
-## Key Takeaways
 
 ### The Mental Model Shift
 
