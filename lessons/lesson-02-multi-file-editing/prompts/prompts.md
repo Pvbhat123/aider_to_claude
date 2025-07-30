@@ -1,18 +1,12 @@
 # paicc-2 Project Structure
-
 ```
 paicc-2/
-│
 ├── AI_DOCS/                          # AI documentation
 │   │
 │   └── openai_structured_output_example_code.md
-│
-├── src/                              # Source code
-│   │
-│   └── transcript_analytics/         # Main package
-│       │
-│       ├── __init__.py              # Package initialization
-│       │
+├── src/                              # Source code 
+│   └── transcript_analytics/         # Main package    
+│       ├── __init__.py              # Package initialization   
 │       └── main.py                  # Entry point
 │
 ├── README.md                         # Project documentation
@@ -196,28 +190,6 @@ Claude Code monitors the terminal output and can automatically suggest fixes for
 
 ## Context Management in Claude Code
 
-### File Management
-
-In Claude Code, context management is more streamlined:
-
-1. **Automatic Context** - Claude Code automatically includes relevant files
-2. **GUI File Selector** - Use the file selector to add/remove files visually
-3. **Smart Context** - Claude Code intelligently manages context based on your task
-4. **Token Display** - Token usage is shown in the interface
-
-### Context Management Best Practices
-
-- Claude Code automatically manages most context for you
-- You can manually add files through the GUI when needed
-- The interface shows which files are currently in context
-- Token usage is displayed in real-time
-
-Example workflow:
-- Claude Code automatically detects which files you're working with
-- Use the file selector (+) button to add specific files if needed
-- Remove files by clicking the (x) next to them in the context list
-- Token usage updates automatically as you work
-
 ## Task 3: Adding Word Blacklist
 
 Create a constants file with common words to filter:
@@ -308,33 +280,6 @@ Think of yourself as:
 - **Code Curator**: Select what to keep and what to modify
 - **Code Delegator**: Assign tasks to Claude Code
 
-### Best Practices
 
-1. **Keep It Simple**: Do one thing at a time
-2. **Be Specific**: Use exact variable names, function names, and file locations
-3. **Provide Examples**: Documentation and code examples help Claude Code understand patterns
-4. **Validate Changes**: Always test after each change
-5. **Trust Smart Context**: Claude Code automatically manages context, but you can override when needed
-
-### The Value of AI-Powered Development
-
-- Spend money to save time - a few cents per prompt is worth the speed gain
-- Move at light speed by delegating implementation details
-- Focus on the "what" not the "how"
-- Plan your work clearly to write better prompts
-
-## Conclusion
-
-You've learned to:
-- Run multi-file prompts effectively with Claude Code
-- Let Claude Code manage context intelligently
-- Make coordinated changes across multiple files
-- Build modular, production-ready code with Claude Code's assistance
-
-In the next lesson, we'll build on these fundamentals to write high-quality AI coding prompts that reduce hallucinations and errors to near zero. These patterns will also reduce prompt length, allowing you to move even faster.
-
-Remember: AI coding isn't just about writing code faster - it's about becoming a more effective engineer who ships features and gets the job done. It's your next-generation tool to accomplish that goal.
-
-**Context. Model. Prompt.** Keep hitting the bulls-eye!
 follow all the above transcript step by step and make the changes.
 think deeply and take your time if there are any errors analyze and solve it yourself.
