@@ -1,0 +1,5 @@
+This is another sample transcript for testing purposes.
+
+The purpose of this transcript is to demonstrate how our application can analyze different files. We want to make sure that the word frequency analysis works correctly across multiple transcript files.
+
+Testing is important. Testing helps us ensure quality. Testing catches bugs early in the development process.

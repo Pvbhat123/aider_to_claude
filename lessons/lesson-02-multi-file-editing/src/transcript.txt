@@ -1,0 +1,15 @@
+Welcome to Principled AI Coding, Lesson Two.
+
+You've learned the fundamentals. Now let's progress to the next level of AI coding with multi-file editing. AI coding across multiple files is a no-brainer must-have necessity for efficient engineering in the age of generative AI.
+
+In this lesson, we're going to build on the fundamentals so you can quickly create and modify files across your codebase quickly and concisely.
+
+Before we dive in, let's establish the key principle behind this lesson: The Big Three Bulls-Eye.
+
+At the heart of every AI coding assistant, there are three vital components that make the magic happen:
+
+1. Context
+2. Model
+3. Prompt
+
+We refer to these as "The Big Three." Master these three elements and you'll unlock the full power of AI coding for today's tools and tomorrow's tools.

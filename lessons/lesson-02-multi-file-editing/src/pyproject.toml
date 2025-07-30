@@ -1,0 +1,11 @@
+[project]
+name = "transcript-analytics"
+version = "0.1.0"
+dependencies = [
+    "python-dotenv",
+    "google-generativeai",
+    "pydantic"
+]
+
+[tool.uv]
+dev-dependencies = []
