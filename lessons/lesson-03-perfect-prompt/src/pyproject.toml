@@ -1,0 +1,20 @@
+[project]
+name = "transcript-analytics"
+version = "1.0.0"
+description = "A tool for analyzing transcripts with LLM integration"
+requires-python = ">=3.11"
+dependencies = [
+    "openai",
+    "pydantic",
+    "matplotlib",
+    "pyyaml",
+    "python-dotenv",
+    "google-generativeai"
+]
+
+[project.scripts]
+transcript-analytics = "transcript_analytics.main:main"
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
