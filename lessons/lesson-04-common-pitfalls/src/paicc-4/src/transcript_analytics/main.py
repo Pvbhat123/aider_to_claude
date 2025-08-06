@@ -1,87 +1,90 @@
-"""Main entry point for transcript analytics tool."""
-
+import os
 import sys
 from pathlib import Path
 from collections import Counter
 from typing import Dict
 
 from .arg_parse import parse_arguments
-from .constants import word_blacklist
-from .data_types import TranscriptAnalysis
+from .constants import word_blacklist, DEFAULT_THRESHOLD
+from .llm import analyze_transcript
 from .chart import word_count_bar_chart, word_count_pie_chart, word_count_line_chart
-from .llm import analyze_transcript_with_llm
-from .output_format import format_output
+from .output_format import format_as_json, format_as_markdown, format_as_yaml, format_as_text
 
 
-def read_transcript(file_path: Path) -> str:
-    """Read transcript from file."""
-    try:
-        return file_path.read_text(encoding='utf-8')
-    except Exception as e:
-        print(f"Error reading file: {e}")
-        sys.exit(1)
-
-
-def count_words(text: str, threshold: int = 5) -> Dict[str, int]:
-    """Count word frequencies, filtering by blacklist and threshold."""
-    # Convert to lowercase and split into words
+def count_words(text: str, threshold: int = DEFAULT_THRESHOLD) -> Dict[str, int]:
     words = text.lower().split()
+    word_counts = Counter(words)
     
-    # Remove punctuation and filter
-    cleaned_words = []
-    for word in words:
-        # Remove common punctuation
-        word = word.strip('.,!?;:"\'()-[]{}')
-        if word and word not in word_blacklist and len(word) > 2:
-            cleaned_words.append(word)
+    filtered_counts = {
+        word: count for word, count in word_counts.items()
+        if word not in word_blacklist and count >= threshold
+    }
     
-    # Count frequencies
-    word_counts = Counter(cleaned_words)
-    
-    # Filter by threshold
-    return {word: count for word, count in word_counts.items() if count >= threshold}
+    return dict(sorted(filtered_counts.items(), key=lambda x: x[1], reverse=True))
 
 
 def main():
-    """Main function to orchestrate transcript analysis."""
-    # Parse arguments
     args = parse_arguments()
     
-    # Read transcript
-    print(f"Reading transcript from {args.transcript_file}...")
-    transcript_text = read_transcript(args.transcript_file)
+    if not os.path.exists(args.transcript_file):
+        print(f"Error: File '{args.transcript_file}' not found.")
+        sys.exit(1)
     
-    # Count words
-    print(f"Analyzing word frequencies (threshold: {args.threshold})...")
-    word_frequencies = count_words(transcript_text, args.threshold)
+    try:
+        with open(args.transcript_file, 'r', encoding='utf-8') as f:
+            transcript_text = f.read()
+    except Exception as e:
+        print(f"Error reading file: {e}")
+        sys.exit(1)
     
-    # Get top words
-    top_words = sorted(word_frequencies.items(), key=lambda x: x[1], reverse=True)[:20]
+    word_freq = count_words(transcript_text, args.threshold)
     
-    # Create visualizations
-    print("Generating visualizations...")
-    word_count_bar_chart(word_frequencies)
-    word_count_pie_chart(word_frequencies, top_n=10)
-    word_count_line_chart(word_frequencies)
+    if not args.output_format or args.output_format == 'text':
+        print("\nWord Frequency Analysis:")
+        print("-" * 40)
+        for word, count in word_freq.items():
+            print(f"{word}: {count}")
+        return
     
-    # LLM analysis
-    print("Running AI analysis...")
-    llm_results = analyze_transcript_with_llm(transcript_text)
+    analysis = analyze_transcript(transcript_text, args.threshold)
     
-    # Create analysis object
-    analysis = TranscriptAnalysis(
-        word_frequencies=word_frequencies,
-        total_words=len(transcript_text.split()),
-        unique_words=len(word_frequencies),
-        top_words=top_words,
-        llm_summary=llm_results["summary"],
-        key_topics=llm_results["topics"]
-    )
+    chart_paths = []
+    output_dir = Path("output")
+    output_dir.mkdir(exist_ok=True)
     
-    # Format and display output
-    formatted_output = format_output(analysis, args.output_format)
-    print("\n" + "="*50 + "\n")
-    print(formatted_output)
+    try:
+        bar_chart_path = word_count_bar_chart(word_freq, str(output_dir))
+        pie_chart_path = word_count_pie_chart(word_freq, str(output_dir))
+        line_chart_path = word_count_line_chart(word_freq, str(output_dir))
+        chart_paths = [bar_chart_path, pie_chart_path, line_chart_path]
+        print(f"Charts saved: {', '.join(chart_paths)}")
+    except Exception as e:
+        print(f"Warning: Could not generate charts: {e}")
+    
+    output_filename = args.output_file
+    if not output_filename:
+        base_name = Path(args.transcript_file).stem
+        output_filename = f"analysis.{args.output_format}"
+    
+    try:
+        if args.output_format == 'json':
+            output_content = format_as_json(analysis)
+        elif args.output_format == 'yaml':
+            output_content = format_as_yaml(analysis)
+        elif args.output_format == 'markdown':
+            output_content = format_as_markdown(analysis, chart_paths)
+        else:
+            output_content = format_as_text(analysis)
+        
+        with open(output_filename, 'w', encoding='utf-8') as f:
+            f.write(output_content)
+        
+        print(f"\nAnalysis saved to: {output_filename}")
+        print("\n" + output_content[:500] + "..." if len(output_content) > 500 else output_content)
+        
+    except Exception as e:
+        print(f"Error generating output: {e}")
+        sys.exit(1)
 
 
 if __name__ == "__main__":

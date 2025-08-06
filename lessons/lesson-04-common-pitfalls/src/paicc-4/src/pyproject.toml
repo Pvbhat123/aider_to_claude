@@ -1,0 +1,16 @@
+[project]
+name = "transcript-analytics"
+version = "0.1.0"
+description = "CLI application for analyzing transcripts with AI-powered insights"
+requires-python = ">=3.11"
+dependencies = [
+    "google-generativeai>=0.8.0",
+    "pydantic>=2.0.0",
+    "matplotlib>=3.7.0",
+    "pyyaml>=6.0",
+    "python-dotenv>=1.0.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

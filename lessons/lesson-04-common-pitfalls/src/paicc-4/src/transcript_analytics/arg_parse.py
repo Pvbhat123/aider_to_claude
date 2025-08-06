@@ -1,39 +1,37 @@
-"""Command-line argument parsing for transcript analytics."""
-
 import argparse
-from pathlib import Path
+from .constants import SUPPORTED_FORMATS, DEFAULT_THRESHOLD
 
 
 def parse_arguments():
-    """Parse command-line arguments for transcript analysis."""
     parser = argparse.ArgumentParser(
-        description="Analyze transcript files for word frequency and insights"
+        description="Analyze transcript files with AI-powered insights",
+        prog="transcript_analytics"
     )
     
     parser.add_argument(
         "transcript_file",
-        type=Path,
+        type=str,
         help="Path to the transcript file to analyze"
     )
     
     parser.add_argument(
         "--threshold",
         type=int,
-        default=5,
-        help="Minimum word frequency threshold (default: 5)"
+        default=DEFAULT_THRESHOLD,
+        help=f"Minimum word count threshold (default: {DEFAULT_THRESHOLD})"
     )
     
     parser.add_argument(
         "--output-format",
-        choices=["text", "json", "yaml", "markdown"],
+        choices=SUPPORTED_FORMATS,
         default="text",
-        help="Output format for results (default: text)"
+        help="Output format for the analysis (default: text)"
     )
     
-    args = parser.parse_args()
+    parser.add_argument(
+        "--output-file",
+        type=str,
+        help="Custom output filename (auto-generated if not specified)"
+    )
     
-    # Validate file exists
-    if not args.transcript_file.exists():
-        parser.error(f"Transcript file not found: {args.transcript_file}")
-    
-    return args
+    return parser.parse_args()

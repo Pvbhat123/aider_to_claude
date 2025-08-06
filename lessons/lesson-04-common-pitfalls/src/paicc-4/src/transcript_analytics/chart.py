@@ -1,80 +1,109 @@
-"""Data visualization functions for transcript analysis."""
-
+import os
+from typing import Dict
 import matplotlib.pyplot as plt
-from typing import Dict, List, Tuple
+import matplotlib
+matplotlib.use('Agg')
 
 
-def word_count_bar_chart(word_counts: Dict[str, int], top_n: int = 20) -> None:
-    """Create a bar chart of top word frequencies."""
-    # Sort and get top N words
-    sorted_words = sorted(word_counts.items(), key=lambda x: x[1], reverse=True)[:top_n]
-    words, counts = zip(*sorted_words) if sorted_words else ([], [])
+def word_count_bar_chart(freq_dict: Dict[str, int], output_dir: str = "output") -> str:
+    os.makedirs(output_dir, exist_ok=True)
     
-    # Create bar chart
-    plt.figure(figsize=(12, 6))
-    bars = plt.bar(range(len(words)), counts)
+    if not freq_dict:
+        return ""
     
-    # Color coding: top quartile green, bottom quartile red, rest blue
-    quartile_size = len(bars) // 4
-    for i, bar in enumerate(bars):
-        if i < quartile_size:
-            bar.set_color('green')
-        elif i >= len(bars) - quartile_size:
-            bar.set_color('red')
+    top_20 = dict(list(freq_dict.items())[:20])
+    
+    words = list(top_20.keys())
+    counts = list(top_20.values())
+    
+    max_count = max(counts)
+    min_count = min(counts)
+    range_count = max_count - min_count if max_count != min_count else 1
+    
+    colors = []
+    for count in counts:
+        normalized = (count - min_count) / range_count
+        if normalized > 0.75:
+            colors.append('green')
+        elif normalized < 0.25:
+            colors.append('red')
         else:
-            bar.set_color('blue')
+            colors.append('blue')
     
-    plt.xlabel('Words')
-    plt.ylabel('Frequency')
-    plt.title(f'Top {top_n} Word Frequencies')
-    plt.xticks(range(len(words)), words, rotation=45, ha='right')
+    plt.figure(figsize=(12, 6))
+    plt.barh(words[::-1], counts[::-1], color=colors[::-1])
+    plt.xlabel('Frequency')
+    plt.ylabel('Words')
+    plt.title('Top 20 Word Frequency Analysis')
     plt.tight_layout()
-    plt.show()
+    
+    output_path = os.path.join(output_dir, 'word_frequency_bar.png')
+    plt.savefig(output_path, dpi=100, bbox_inches='tight')
+    plt.close()
+    
+    return output_path
 
 
-def word_count_pie_chart(word_counts: Dict[str, int], top_n: int = 10) -> None:
-    """Create a pie chart of top word frequencies."""
-    # Sort and get top N words
-    sorted_words = sorted(word_counts.items(), key=lambda x: x[1], reverse=True)[:top_n]
+def word_count_pie_chart(freq_dict: Dict[str, int], output_dir: str = "output") -> str:
+    os.makedirs(output_dir, exist_ok=True)
     
-    if not sorted_words:
-        print("No data to display in pie chart")
-        return
+    if not freq_dict:
+        return ""
     
-    words, counts = zip(*sorted_words)
+    top_10 = dict(list(freq_dict.items())[:10])
     
-    # Add "Others" category
-    total_count = sum(word_counts.values())
-    top_count = sum(counts)
-    other_count = total_count - top_count
+    labels = list(top_10.keys())
+    sizes = list(top_10.values())
     
+    other_count = sum(list(freq_dict.values())[10:]) if len(freq_dict) > 10 else 0
     if other_count > 0:
-        words = list(words) + ['Others']
-        counts = list(counts) + [other_count]
+        labels.append('Others')
+        sizes.append(other_count)
     
-    # Create pie chart
     plt.figure(figsize=(10, 8))
-    plt.pie(counts, labels=words, autopct='%1.1f%%', startangle=90)
-    plt.title(f'Top {top_n} Word Distribution')
+    colors = plt.cm.Set3(range(len(labels)))
+    
+    plt.pie(sizes, labels=labels, colors=colors, autopct='%1.1f%%', startangle=90)
     plt.axis('equal')
-    plt.show()
+    plt.title('Word Distribution (Top 10 + Others)')
+    
+    output_path = os.path.join(output_dir, 'word_frequency_pie.png')
+    plt.savefig(output_path, dpi=100, bbox_inches='tight')
+    plt.close()
+    
+    return output_path
 
 
-def word_count_line_chart(word_counts: Dict[str, int], top_n: int = 30) -> None:
-    """Create a line chart showing word frequency distribution."""
-    # Sort words by frequency
-    sorted_counts = sorted(word_counts.values(), reverse=True)[:top_n]
+def word_count_line_chart(freq_dict: Dict[str, int], output_dir: str = "output") -> str:
+    os.makedirs(output_dir, exist_ok=True)
     
-    if not sorted_counts:
-        print("No data to display in line chart")
-        return
+    if not freq_dict:
+        return ""
     
-    # Create line chart
-    plt.figure(figsize=(10, 6))
-    plt.plot(range(1, len(sorted_counts) + 1), sorted_counts, marker='o', markersize=4)
+    top_30 = dict(list(freq_dict.items())[:30])
+    
+    positions = list(range(1, len(top_30) + 1))
+    counts = list(top_30.values())
+    
+    plt.figure(figsize=(12, 6))
+    plt.plot(positions, counts, marker='o', linestyle='-', linewidth=2, markersize=6)
     plt.xlabel('Word Rank')
     plt.ylabel('Frequency')
-    plt.title('Word Frequency Distribution')
+    plt.title('Word Frequency Distribution (Zipf\'s Law)')
     plt.grid(True, alpha=0.3)
+    
+    for i in range(0, len(positions), 5):
+        plt.annotate(list(top_30.keys())[i], 
+                    xy=(positions[i], counts[i]),
+                    xytext=(5, 5), 
+                    textcoords='offset points',
+                    fontsize=8,
+                    alpha=0.7)
+    
     plt.tight_layout()
-    plt.show()
+    
+    output_path = os.path.join(output_dir, 'word_frequency_line.png')
+    plt.savefig(output_path, dpi=100, bbox_inches='tight')
+    plt.close()
+    
+    return output_path

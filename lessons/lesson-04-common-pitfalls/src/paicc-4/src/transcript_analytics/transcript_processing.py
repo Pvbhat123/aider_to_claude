@@ -1,124 +1,103 @@
-"""Transcript processing with logging support."""
-
 import logging
+from typing import Dict, Optional
 from pathlib import Path
-from collections import Counter
-from typing import Dict, List, Tuple
+from .llm import analyze_with_sentiment
+from .data_types import TranscriptAnalysisV2
+from .constants import DEFAULT_THRESHOLD
 
-from .constants import word_blacklist
-from .data_types import TranscriptAnalysis
-from .llm import analyze_transcript_with_llm
-
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-)
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
 
 def process_transcript_with_logging(
-    file_path: Path,
-    threshold: int = 5
-) -> TranscriptAnalysis:
-    """Process transcript with detailed logging."""
-    logger.info(f"Starting transcript processing for: {file_path}")
+    transcript_path: str, 
+    threshold: int = DEFAULT_THRESHOLD,
+    verbose: bool = True
+) -> TranscriptAnalysisV2:
     
-    # Read file
-    logger.info("Reading transcript file...")
+    if verbose:
+        logger.info(f"Starting transcript processing for: {transcript_path}")
+    
+    if not Path(transcript_path).exists():
+        logger.error(f"File not found: {transcript_path}")
+        raise FileNotFoundError(f"Transcript file not found: {transcript_path}")
+    
     try:
-        text = file_path.read_text(encoding='utf-8')
-        logger.info(f"Successfully read {len(text)} characters")
+        if verbose:
+            logger.info("Reading transcript file...")
+        
+        with open(transcript_path, 'r', encoding='utf-8') as f:
+            text = f.read()
+        
+        file_size = len(text)
+        if verbose:
+            logger.info(f"Loaded transcript: {file_size:,} characters")
+        
+        if verbose:
+            logger.info(f"Analyzing with threshold: {threshold}")
+        
+        analysis = analyze_with_sentiment(text, threshold)
+        
+        if verbose:
+            logger.info("Analysis complete!")
+            logger.info(f"Found {analysis.total_words:,} total words")
+            logger.info(f"Found {analysis.unique_words:,} unique words")
+            logger.info(f"Sentiment: {analysis.sentiment}")
+            logger.info(f"Keywords: {', '.join(analysis.keywords[:5])}")
+        
+        return analysis
+    
     except Exception as e:
-        logger.error(f"Failed to read file: {e}")
+        logger.error(f"Error during processing: {str(e)}")
         raise
-    
-    # Process words
-    logger.info("Tokenizing and cleaning text...")
-    words = text.lower().split()
-    initial_count = len(words)
-    
-    cleaned_words = []
-    for word in words:
-        word = word.strip('.,!?;:"\'()-[]{}')
-        if word and word not in word_blacklist and len(word) > 2:
-            cleaned_words.append(word)
-    
-    logger.info(f"Cleaned {initial_count} words down to {len(cleaned_words)}")
-    
-    # Count frequencies
-    logger.info("Counting word frequencies...")
-    word_counts = Counter(cleaned_words)
-    word_frequencies = {
-        word: count 
-        for word, count in word_counts.items() 
-        if count >= threshold
-    }
-    
-    logger.info(f"Found {len(word_frequencies)} words meeting threshold of {threshold}")
-    
-    # Get top words
-    top_words = sorted(
-        word_frequencies.items(), 
-        key=lambda x: x[1], 
-        reverse=True
-    )[:20]
-    
-    # LLM analysis
-    logger.info("Running AI analysis...")
-    llm_results = analyze_transcript_with_llm(text)
-    
-    # Log summary
-    logger.info("Analysis complete!")
-    logger.info(f"Top 5 words: {', '.join([w[0] for w in top_words[:5]])}")
-    
-    return TranscriptAnalysis(
-        word_frequencies=word_frequencies,
-        total_words=len(words),
-        unique_words=len(word_frequencies),
-        top_words=top_words,
-        llm_summary=llm_results["summary"],
-        key_topics=llm_results["topics"]
-    )
 
 
 def batch_process_transcripts(
-    file_paths: List[Path],
-    threshold: int = 5
-) -> Dict[str, TranscriptAnalysis]:
-    """Process multiple transcripts and return results."""
+    transcript_paths: list[str],
+    threshold: int = DEFAULT_THRESHOLD
+) -> Dict[str, TranscriptAnalysisV2]:
+    
     results = {}
+    logger.info(f"Starting batch processing of {len(transcript_paths)} transcripts")
     
-    logger.info(f"Starting batch processing of {len(file_paths)} files")
-    
-    for i, file_path in enumerate(file_paths, 1):
-        logger.info(f"Processing file {i}/{len(file_paths)}: {file_path.name}")
+    for i, path in enumerate(transcript_paths, 1):
+        logger.info(f"Processing transcript {i}/{len(transcript_paths)}: {path}")
+        
         try:
-            analysis = process_transcript_with_logging(file_path, threshold)
-            results[file_path.name] = analysis
+            analysis = process_transcript_with_logging(path, threshold, verbose=False)
+            results[path] = analysis
+            logger.info(f"✓ Successfully processed: {Path(path).name}")
+        
         except Exception as e:
-            logger.error(f"Failed to process {file_path.name}: {e}")
-            continue
+            logger.error(f"✗ Failed to process {path}: {str(e)}")
+            results[path] = None
     
-    logger.info(f"Batch processing complete. Successfully processed {len(results)} files")
+    successful = sum(1 for v in results.values() if v is not None)
+    logger.info(f"Batch processing complete: {successful}/{len(transcript_paths)} successful")
+    
     return results
 
 
-def generate_comparison_report(analyses: Dict[str, TranscriptAnalysis]) -> str:
-    """Generate a comparison report for multiple transcript analyses."""
-    logger.info("Generating comparison report...")
+def quick_analysis(text: str, verbose: bool = False) -> Dict:
+    if verbose:
+        print("Performing quick analysis...")
     
-    report = []
-    report.append("TRANSCRIPT COMPARISON REPORT")
-    report.append("=" * 60)
+    analysis = analyze_with_sentiment(text, DEFAULT_THRESHOLD)
     
-    for filename, analysis in analyses.items():
-        report.append(f"\n{filename}")
-        report.append("-" * len(filename))
-        report.append(f"Total words: {analysis.total_words}")
-        report.append(f"Unique words: {analysis.unique_words}")
-        report.append(f"Top 3 words: {', '.join([w[0] for w in analysis.top_words[:3]])}")
-        if analysis.key_topics:
-            report.append(f"Key topics: {', '.join(analysis.key_topics[:3])}")
+    result = {
+        "summary": analysis.summary,
+        "sentiment": analysis.sentiment,
+        "top_keywords": analysis.keywords[:5],
+        "word_stats": {
+            "total": analysis.total_words,
+            "unique": analysis.unique_words
+        },
+        "top_words": dict(list(analysis.word_count.items())[:10])
+    }
     
-    return "\n".join(report)
+    if verbose:
+        print("Quick analysis complete!")
+        print(f"Sentiment: {result['sentiment']}")
+        print(f"Top Keywords: {', '.join(result['top_keywords'])}")
+    
+    return result
