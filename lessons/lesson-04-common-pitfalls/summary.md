@@ -112,23 +112,6 @@ When agentic systems fail, it's typically because one of these elements is misal
 3. Design for interpretable decisions
 4. Enable graceful degradation
 
-## Progressive Autonomy Levels
-
-1. **Guided Execution** (Low Autonomy)
-   - Specific step-by-step instructions
-   - Constant human oversight
-   - Minimal decision-making
-
-2. **Semi-Autonomous** (Balanced)
-   - Goal-oriented instructions
-   - Periodic check-ins
-   - Bounded decision space
-
-3. **Fully Autonomous** (High Autonomy)
-   - Objective-based operation
-   - Self-directed problem solving
-   - Independent strategy formation
-
 ## Agentic Anti-Patterns to Avoid
 - Undefined success criteria
 - Unbounded action spaces
